@@ -1,0 +1,5 @@
+name: Hello World
+description: Custom Module Development example module
+type: module
+core: 8.x
+package: Custom
