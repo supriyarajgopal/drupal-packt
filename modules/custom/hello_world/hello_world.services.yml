@@ -1,7 +1,7 @@
 services:
   'hello_world.salutation':
     class: Drupal\hello_world\HelloWorldSalutation
-    arguments: ['@config.factory', '@salutation_event']
+    arguments: ['@config.factory', '@event_dispatcher']
     tags:
       - {name: salutation}
   

@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\hello_world\EventDispatcher;
+namespace Drupal\hello_world;
 
 use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Defines an event dispatcher that allows other modules to modify salutation configuration message.
  */
-class HelloWorldSalutationEvent extends Event {
+class SalutationEvent extends Event {
     const EVENT = 'hello_world.salutation_event';
 
     /**

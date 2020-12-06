@@ -7,8 +7,7 @@ use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
-use Drupal\hello_world\EventDispatcher\HelloWorldSalutationEvent;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Drupal\hello_world\HelloWorldSalutationEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -18,15 +17,15 @@ class HelloWorldSalutation {
     use StringTranslationTrait;
 
     protected $config_factory;
-    protected $salutation_event;
+    protected $eventDispatcher;
 
     /**
      * Constructor for this service.
      */
-    public function __construct(ConfigFactoryInterface $config_factory, EventDispatcherInterface $event)
+    public function __construct(ConfigFactoryInterface $config_factory, EventDispatcherInterface $eventDispatcher)
     {
         $this->configFactory = $config_factory;
-        $this->salutation_event = $event;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -44,13 +43,13 @@ class HelloWorldSalutation {
         $salutation = $config->get('salutation');
         if ($salutation != "") {
             // First, set the salutation value as per the config form.
-            $event = new HelloWorldSalutationEvent();
-            $event->setValue($salutation);
+            $hello_world_salutation_event = new SalutationEvent();
+            $hello_world_salutation_event->setValue($salutation);
             // Then, whenever this method is called, dispatch HelloWorldSalutationEvent
             // so that others can override the salutation message.
-            $event = $this->salutation_event->dispatch(HelloWorldSalutationEvent::EVENT, $event);
+            $hello_world_event = $this->salutation_event->dispatch(SalutationEvent::EVENT, $hello_world_salutation_event);
             // Finally, use the overridden value.
-            return $breadcrumb . '<br />' . $event->getValue();
+            return $breadcrumb . '<br />' . $hello_world_salutation_event->getValue();
         }
 
         // Fallback to greeting based on time of day.
@@ -58,7 +57,7 @@ class HelloWorldSalutation {
         if ((int) $time->format('G') > 0 && (int) $time->format('G') <= 12) {
           return $this->t('Good morning world');
         }
-        elseif ((int) $time->format('G') > 12 && (int)$ $time->format('G') <= 18) {
+        elseif ((int) $time->format('G') > 12 && (int) $time->format('G') <= 18) {
             return $this->t('Good afternoon world');
         }
         elseif ((int) $time->format('G') > 18) {
