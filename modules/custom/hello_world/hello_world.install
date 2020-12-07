@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function hello_world_install() {
+    $config  = \Drupal::configFactory()->getEditable('system.mail');
+    $mail_plugins = $config->get('interface');
+
+    if (in_array('hello_world',$mail_plugins)) {
+      return;
+    }
+
+    $mail_plugins['hello_world'] = 'hello_world_mail';
+    $config->set('interface', $mail_plugins)->save();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function hello_world_uninstall() {
+  $config = \Drupal::configFactory()->getEditable('system.mail');
+  $mail_plugins = $config->get('interface');
+
+  if (!in_array('hello_world', $mail_plugins)) {
+    return;
+  }
+
+  unset($mail_plugins['hello_world']);
+  $config->set('interface', $mail_plugins)->save();
+}
+
+function hello_world_update_8001() {
+  $config = \Drupal::configFactory()->getEditable('system.mail');
+  $mail_plugins = $config->get('interface');
+
+  if (!in_array('hello_world', $mail_plugins)) {
+    return;
+  }
+
+  unset($mail_plugins['hello_world']);
+  $config->set('interface', $mail_plugins)->save();
+}

@@ -4,11 +4,30 @@ namespace Drupal\hello_world\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configuration Form to save custom salutation message.
  */
 class HelloWorldSalutationConfigForm extends ConfigFormBase {
+
+    protected $logger;
+
+    public function __construct(ConfigFactoryInterface $config_factory, LoggerChannelInterface $logger)
+    {
+        parent::__construct($config_factory);
+        $this->logger = $logger;
+    }
+
+    public static function create(ContainerInterface $container)
+    {
+        return new static(
+          $container->get('config.factory'),
+          $container->get('hello_world.logger.channel.hello_world')
+        );
+    }
 
     /**
      * {@inheritdoc}
@@ -63,6 +82,8 @@ class HelloWorldSalutationConfigForm extends ConfigFormBase {
         $config->set('salutation', $form_state->getValue('salutation'));
         $config->save();
 
+        // Log the changed greeting message.
+        $this->logger->info('The Hello World greeting message has been set to @msg', array('@msg' => $form_state->getValue('salutation')));
         return parent::submitForm($form, $form_state);
     }
 }

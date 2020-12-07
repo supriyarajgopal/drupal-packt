@@ -17,16 +17,16 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class HelloWorldSalutation {
     use StringTranslationTrait;
 
-    protected $config_factory;
-    protected $salutation_event;
+    protected $configFactory;
+    protected $eventDispatcher;
 
     /**
      * Constructor for this service.
      */
-    public function __construct(ConfigFactoryInterface $config_factory, EventDispatcherInterface $event)
+    public function __construct(ConfigFactoryInterface $config_factory, EventDispatcherInterface $event_dispatcher)
     {
         $this->configFactory = $config_factory;
-        $this->salutation_event = $event;
+        $this->eventDispatcher = $event_dispatcher;
     }
 
     /**
@@ -44,13 +44,13 @@ class HelloWorldSalutation {
         $salutation = $config->get('salutation');
         if ($salutation != "") {
             // First, set the salutation value as per the config form.
-            $event = new HelloWorldSalutationEvent();
-            $event->setValue($salutation);
+            $salutation_event = new HelloWorldSalutationEvent();
+            $salutation_event->setValue($salutation);
             // Then, whenever this method is called, dispatch HelloWorldSalutationEvent
             // so that others can override the salutation message.
-            $event = $this->salutation_event->dispatch(HelloWorldSalutationEvent::EVENT, $event);
+            $event = $this->eventDispatcher->dispatch(HelloWorldSalutationEvent::EVENT, $salutation_event);
             // Finally, use the overridden value.
-            return $breadcrumb . '<br />' . $event->getValue();
+            return $breadcrumb . '<br />' . $salutation_event->getValue();
         }
 
         // Fallback to greeting based on time of day.
@@ -58,7 +58,7 @@ class HelloWorldSalutation {
         if ((int) $time->format('G') > 0 && (int) $time->format('G') <= 12) {
           return $this->t('Good morning world');
         }
-        elseif ((int) $time->format('G') > 12 && (int)$ $time->format('G') <= 18) {
+        elseif ((int) $time->format('G') > 12 && (int) $time->format('G') <= 18) {
             return $this->t('Good afternoon world');
         }
         elseif ((int) $time->format('G') > 18) {
