@@ -65,4 +65,43 @@ class HelloWorldSalutation {
             return $this->t('Good evening world');
         }
     }
+
+    /**
+     * Returns the Salutation render array.
+     */
+    public function getSalutationComponent() {
+        $render_array = [
+          '#theme' => 'hello_world_salutation',
+        ];
+
+        $config = $this->configFactory->get('hello_world.custom_salutation');
+
+        // If custom salutation message exists, return that.
+        $salutation = $config->get('salutation');
+        if ($salutation != "") {
+            // First, set the salutation value as per the config form.
+            $salutation_event = new HelloWorldSalutationEvent();
+            $salutation_event->setValue($salutation);
+            // Then, whenever this method is called, dispatch HelloWorldSalutationEvent
+            // so that others can override the salutation message.
+            $event = $this->eventDispatcher->dispatch(HelloWorldSalutationEvent::EVENT, $salutation_event);
+            $render_array['#overridden'] = TRUE;
+            // Finally, use the overridden value.
+            return $render_array;
+        }
+
+        // Fallback to greeting based on time of day.
+        $render_array['#target'] = $this->t('world');
+        $time = new \DateTime();
+        if ((int) $time->format('G') > 0 && (int) $time->format('G') <= 12) {
+          $render_array['#salutation'] = $this->t('Good morning');
+        }
+        elseif ((int) $time->format('G') > 12 && (int) $time->format('G') <= 18) {
+          $render_array['#salutation'] = $this->t('Good afternoon');
+        }
+        elseif ((int) $time->format('G') > 18) {
+          $render_array['#salutation'] = $this->t('Good evening');
+        }
+        return $render_array;
+    }
 }
