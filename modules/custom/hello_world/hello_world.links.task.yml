@@ -1,0 +1,13 @@
+hello_world.page:
+  title: 'Hello World'
+  description: 'View Hello World Page'
+  route_name: hello_world.hello
+  base_route: hello_world.hello
+  weight: 0
+
+hello_world.config:
+  title: 'Configuration'
+  description: 'Custom Salutation Message'
+  route_name: hello_world.salutation
+  base_route: hello_world.hello
+  weight: 10

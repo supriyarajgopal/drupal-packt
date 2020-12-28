@@ -1,0 +1,4 @@
+hello_world.override:
+  title: 'Override'
+  group: hello_world
+  route_name: hello_world.salutation
