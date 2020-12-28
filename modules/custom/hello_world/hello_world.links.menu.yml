@@ -1,0 +1,6 @@
+hello_world.hello_menu:
+  title: 'Hello World'
+  description: 'Hello World page'
+  weight: 0
+  route_name: hello_world.hello
+  menu_name: main
